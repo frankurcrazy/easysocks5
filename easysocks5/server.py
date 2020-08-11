@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+""" SOCKS5 server
+
+    Parameters:
+        --host, -H: ip/host to listen on for SOCKS5 server
+        --port, -P: port to listen on
+        --verbose, -V: increase verbosity
+"""
+
 import asyncio
 import argparse
 import logging
@@ -38,3 +46,5 @@ if __name__ == "__main__":
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main(args, loop))
+
+__all__ = []

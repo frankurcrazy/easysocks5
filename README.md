@@ -12,7 +12,7 @@ Python >= 3.7
 ### Install from PyPI
 ```bash
 python3 -m pip install easysocks5
-python -m easysocks5.server -H 127.0.0.1 -P 8888
+python3 -m easysocks5.server -H 127.0.0.1 -P 8888
 ```
 
 ### Get latest version from GitHub

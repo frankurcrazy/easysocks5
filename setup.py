@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="easysocks5",
-    version="0.0.2",
+    version="0.0.3",
     author="Frank Chang",
     author_email="frank@csie.io",
-    description="easysocks5 is simple SOCKS5 server implementation with AsyncIO",
+    description="easysocks5 is a simple SOCKS5 server implementation with AsyncIO",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/frankurcrazy/easysocks5",

@@ -35,6 +35,15 @@ CONNECTION_RESET =                                  3
 CONNECTION_TIMEOUT =                                5
 
 class Socks5Protocol(Protocol):
+    """ Socks5 Protocol
+
+        Socks5 protocol (partially) implement RFC1928 standard,
+        It handles initial connection setup from SOCKS client
+        including authentication method negotiation. And handles
+        connection requests after successful authentication by
+        establishing connection to external hosts.
+    """
+
     SUPPORTED_AUTH = [
         SOCKS5_AUTH_NO_AUTH,
     ]
@@ -219,6 +228,18 @@ class Socks5Protocol(Protocol):
         self._remote_protocol.send_payload(data)
 
     def send_payload(self, payload):
+        """ Send payload to SOCKS client
+
+            This method is called by remote connection protocol in
+            order to forward payload to the SOCKS client
+
+            Args:
+                payload (memoryview): The payload to send
+
+            Returns:
+                None
+        """
+
         self._traffic["tx"] += payload.nbytes
         self._transport.write(payload)
 
@@ -258,5 +279,13 @@ class Socks5Protocol(Protocol):
             self._remote_protocol.get_transport().resume_reading()
 
     def get_transport(self):
+        """ Getter for the protocol's transport
+
+            Args:
+                None
+
+            Returns:
+                transport (asyncio.Transport): The associated transport
+        """
         return self._transport
 

@@ -5,6 +5,12 @@ import logging
 from asyncio import Protocol
 
 class RemoteConnectionProtocol(Protocol):
+    """ Remote Connection Protocol
+
+        Remote Connection Protocol is created when connection to
+        external host is established. It forwards traffic between
+        socks server and external host.
+    """
     def __init__(self, socks_protocol, logger=None, loop=None):
         if not logger:
             self._logger = logging.getLogger(self.__class__.__name__)
