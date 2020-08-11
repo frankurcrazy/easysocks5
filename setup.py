@@ -4,14 +4,14 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="simple-socks5",
+    name="easysocks5",
     version="0.0.1",
     author="Frank Chang",
     author_email="frank@csie.io",
-    description="A simple SOCKS5 server implementation with AsyncIO",
+    description="easysocks5 is simple SOCKS5 server implementation with AsyncIO",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/frankurcrazy/socks5",
+    url="https://github.com/frankurcrazy/easysocks5",
     packages=setuptools.find_packages(),
     license="MIT",
     classifiers=[

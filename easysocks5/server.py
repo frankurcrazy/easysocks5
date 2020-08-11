@@ -3,7 +3,7 @@
 import asyncio
 import argparse
 import logging
-from socks5.socks5 import Socks5Protocol
+from easysocks5.socks5 import Socks5Protocol
 
 async def main(args, loop):
     logger = logging.getLogger(__name__)

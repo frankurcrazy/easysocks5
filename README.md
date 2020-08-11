@@ -1,6 +1,6 @@
-# socks5
+# easysocks5
 
-***socks5*** is a simple SOCKS5 implementation based on AsyncIO.
+***easysocks5*** is a simple SOCKS5 implementation based on AsyncIO.
 
 Currently only SOCKS5 without authentication and CONNECT command are supported.
 
@@ -11,14 +11,14 @@ Python >= 3.7
 
 ### Install from PyPI
 ```bash
-python3 -m pip install simple-socks5
-python -m socks5.server -H 127.0.0.1 -P 8888
+python3 -m pip install easysocks5
+python -m easysocks5.server -H 127.0.0.1 -P 8888
 ```
 
 ### Get latest version from GitHub
 ```bash
-git clone https://github.com/frankurcrazy/socks5
-cd socks5 && python -m socks5.server -H 127.0.0.1 -P 8888
+git clone https://github.com/frankurcrazy/easysocks5
+cd easysocks5 && python -m easysocks5.server -H 127.0.0.1 -P 8888
 ```
 
 ## License
