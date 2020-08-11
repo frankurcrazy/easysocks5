@@ -74,8 +74,11 @@ class Socks5Protocol(Protocol):
 
     def connection_lost(self, exc):
         ip, port, *_ = self._transport.get_extra_info("peername")
-        self._logger.info(f"Peer connection from {ip}:{port} lost: {exc or 'No error'}.")
+        self._logger.info(f"Peer connection from {ip}:{port} is lost: {exc or 'No error'}.")
         self._transport.close()
+
+        if self._remote_protocol and not self._remote_protocol.get_transport().is_closing():
+            self._remote_protocol.connection_lost("Host connection closed.")
 
     def _send_authentication_method(self, auth_method=None):
         if auth_method is None:

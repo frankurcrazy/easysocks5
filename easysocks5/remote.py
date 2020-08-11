@@ -33,8 +33,9 @@ class RemoteConnectionProtocol(Protocol):
 
     def connection_lost(self, exc):
         ip, port, *_ = self._transport.get_extra_info("peername")
-        self._logger.info(f"Connection to {ip}:{port} lost: {exc or 'No error'}.")
+        self._logger.info(f"Connection to {ip}:{port} is lost: {exc or 'No error'}.")
         self._transport.close()
+        self._socks_protocol.connection_lost("Remote connection is lost.")
 
     def send_payload(self, data):
         self._transport.write(data)

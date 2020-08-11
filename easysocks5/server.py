@@ -11,7 +11,7 @@ async def main(args, loop):
     server = await loop.create_server(
          lambda: Socks5Protocol(loop=loop),
          host=args.host, port=args.port, reuse_address=True, start_serving=True)
-    logger.info(f"Socks server listening on {args.host}:{args.port}.")
+    logger.info(f"Socks5 server listening on {args.host}:{args.port}.")
     
     await server.wait_closed()
 
