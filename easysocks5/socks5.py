@@ -183,7 +183,7 @@ class Socks5Protocol(Protocol):
             dhost = str(ipaddress.IPv6Address(data[4: 20].tobytes()))
         elif atyp == SOCKS5_ATYP_DOMAINNAME:
             dhostLen = data[4]
-            dhost = data[5: 5+dhostLen].decode('utf-8')
+            dhost = data[5: 5+dhostLen].tobytes().decode('utf-8')
 
         dport, *_ = struct.unpack("!H", data[-2:])
         self._logger.debug(
