@@ -120,7 +120,7 @@ class Socks5Protocol(Protocol):
         self._logger.debug("handling auth method negotiation.")
 
         # Check auth packet length
-        if data.nbytes != 3:
+        if data.nbytes < 3 or data.nbytes > 257:
             self._logger.error(f"Invalid packets length: {len(data)}.")
             self._transport.close()
             return

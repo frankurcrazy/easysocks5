@@ -4,7 +4,7 @@
 """
 
 __name__ = "easysocks5"
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __author__ = "Frank Chang"
 __author_email__ = "frank@csie.io"
 __license__ = "MIT"
