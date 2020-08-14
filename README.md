@@ -1,5 +1,7 @@
 # easysocks5
 
+[![PyPI version](https://badge.fury.io/py/easysocks5.svg)](https://badge.fury.io/py/easysocks5)
+
 ***easysocks5*** is a simple SOCKS5 implementation based on AsyncIO.
 
 Currently only SOCKS5 without authentication and CONNECT command are supported.
