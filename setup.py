@@ -24,5 +24,5 @@ setuptools.setup(
         "Topic :: System :: Networking",
     ],
     keywords=["socks", "socks5", "asyncio"],
-    python_requires='>=3.7',
+    python_requires=">=3.7",
 )

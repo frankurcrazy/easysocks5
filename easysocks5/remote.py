@@ -4,6 +4,7 @@ import asyncio
 import logging
 from asyncio import Protocol
 
+
 class RemoteConnectionProtocol(Protocol):
     """ Remote Connection Protocol
 
@@ -11,6 +12,7 @@ class RemoteConnectionProtocol(Protocol):
         external host is established. It forwards traffic between
         socks server and external host.
     """
+
     def __init__(self, socks_protocol, logger=None, loop=None):
         if not logger:
             self._logger = logging.getLogger(self.__class__.__name__)
@@ -27,7 +29,7 @@ class RemoteConnectionProtocol(Protocol):
         self._pause_writing = False
 
     def get_sockname(self):
-        ip, port, *_ = self._transport.get_extra_info('sockname')
+        ip, port, *_ = self._transport.get_extra_info("sockname")
         return (ip, port)
 
     def connection_made(self, transport):
@@ -62,4 +64,3 @@ class RemoteConnectionProtocol(Protocol):
         if self._pause_writing:
             self._pause_writing = False
             self._socks_protocol.get_transport().resume_reading()
-

@@ -1,38 +1,40 @@
 #!/usr/bin/env python
 
 import asyncio
-import logging
 import ipaddress
+import logging
 import struct
 from asyncio import Protocol
+
 from easysocks5.remote import RemoteConnectionProtocol
 
-SOCKS5_VER =                                        b'\x05'
-SOCKS5_AUTH_NO_AUTH =                               b'\x00'
-SOCKS5_AUTH_GSSAPI =                                b'\x01'
-SOCKS5_AUTH_USERNAME_PASSWORD =                     b'\x02'
-SOCKS5_AUTH_UNAVAILABLE =                           b'\xff'
-SOCKS5_CMD_CONNECT =                                b'\x01'
-SOCKS5_CMD_BIND =                                   b'\x02'
-SOCKS5_CMD_UDP =                                    b'\x03'
-SOCKS5_REP_SUCCEEDED =                              b'\x00'
-SOCKS5_REP_GENERAL_SOCKS_SERVER_FAILURE =           b'\x01'
-SOCKS5_REP_CONNECTION_NOT_ALLOWED_BY_RULESET =      b'\x02'
-SOCKS5_REP_NETWORK_UNREACHABLE =                    b'\x03'
-SOCKS5_REP_HOST_UNREACHABLE =                       b'\x04'
-SOCKS5_REP_CONNECTION_REFUSED =                     b'\x05'
-SOCKS5_REP_TTL_EXPIRED =                            b'\x06'
-SOCKS5_REP_COMMAND_NOT_SUPPORTED =                  b'\x07'
-SOCKS5_REP_ADDRESS_TYPE_NOT_SUPPORTED =             b'\x08'
-SOCKS5_RSV =                                        b'\x00'
-SOCKS5_ATYP_IPv4 =                                  b'\x01'
-SOCKS5_ATYP_DOMAINNAME =                            b'\x03'
-SOCKS5_ATYP_IPv6 =                                  b'\x04'
-CONNECTION_IDLE =                                   0
-CONNECTION_START =                                  1
-CONNECTION_ESTABLISHED =                            2
-CONNECTION_RESET =                                  3
-CONNECTION_TIMEOUT =                                5
+SOCKS5_VER = b"\x05"
+SOCKS5_AUTH_NO_AUTH = b"\x00"
+SOCKS5_AUTH_GSSAPI = b"\x01"
+SOCKS5_AUTH_USERNAME_PASSWORD = b"\x02"
+SOCKS5_AUTH_UNAVAILABLE = b"\xff"
+SOCKS5_CMD_CONNECT = b"\x01"
+SOCKS5_CMD_BIND = b"\x02"
+SOCKS5_CMD_UDP = b"\x03"
+SOCKS5_REP_SUCCEEDED = b"\x00"
+SOCKS5_REP_GENERAL_SOCKS_SERVER_FAILURE = b"\x01"
+SOCKS5_REP_CONNECTION_NOT_ALLOWED_BY_RULESET = b"\x02"
+SOCKS5_REP_NETWORK_UNREACHABLE = b"\x03"
+SOCKS5_REP_HOST_UNREACHABLE = b"\x04"
+SOCKS5_REP_CONNECTION_REFUSED = b"\x05"
+SOCKS5_REP_TTL_EXPIRED = b"\x06"
+SOCKS5_REP_COMMAND_NOT_SUPPORTED = b"\x07"
+SOCKS5_REP_ADDRESS_TYPE_NOT_SUPPORTED = b"\x08"
+SOCKS5_RSV = b"\x00"
+SOCKS5_ATYP_IPv4 = b"\x01"
+SOCKS5_ATYP_DOMAINNAME = b"\x03"
+SOCKS5_ATYP_IPv6 = b"\x04"
+CONNECTION_IDLE = 0
+CONNECTION_START = 1
+CONNECTION_ESTABLISHED = 2
+CONNECTION_RESET = 3
+CONNECTION_TIMEOUT = 5
+
 
 class Socks5Protocol(Protocol):
     """ Socks5 Protocol
@@ -83,10 +85,15 @@ class Socks5Protocol(Protocol):
 
     def connection_lost(self, exc):
         ip, port, *_ = self._transport.get_extra_info("peername")
-        self._logger.info(f"Peer connection from {ip}:{port} is lost: {exc or 'No error'}.")
+        self._logger.info(
+            f"Peer connection from {ip}:{port} is lost: {exc or 'No error'}."
+        )
         self._transport.close()
 
-        if self._remote_protocol and not self._remote_protocol.get_transport().is_closing():
+        if (
+            self._remote_protocol
+            and not self._remote_protocol.get_transport().is_closing()
+        ):
             self._remote_protocol.connection_lost("Host connection closed.")
 
     def _send_authentication_method(self, auth_method=None):
@@ -97,8 +104,9 @@ class Socks5Protocol(Protocol):
 
         self._traffic["tx"] += 2
 
-    def _send_connection_reply(self, rep, atyp=SOCKS5_ATYP_IPv4,
-            baddr="0.0.0.0", bport=0):
+    def _send_connection_reply(
+        self, rep, atyp=SOCKS5_ATYP_IPv4, baddr="0.0.0.0", bport=0
+    ):
 
         port_bytes = struct.pack("!H", bport)
 
@@ -108,8 +116,7 @@ class Socks5Protocol(Protocol):
             host_bytes = baddr.encode()
             host_bytes = chr(len(host_bytes)).encode() + host_bytes
 
-        reply = SOCKS5_VER + rep + SOCKS5_RSV +\
-            atyp + host_bytes + port_bytes
+        reply = SOCKS5_VER + rep + SOCKS5_RSV + atyp + host_bytes + port_bytes
         self._transport.write(reply)
         self._traffic["tx"] += len(reply)
 
@@ -130,16 +137,15 @@ class Socks5Protocol(Protocol):
             self._logger.error(f"Unsupported socks version: {data[0]}.")
             self._transport.close()
             return
-            
+
         # Checks NMethods
         if data[1] == 0:
             self._logger.error(f"Zero authentication methods.")
             self._transport.close()
 
         elif data[2:].nbytes != data[1]:
-             self._logger.error(
-                 f"Expecting {data[1]} methods, got {data[2:].nbytes}.") 
-             self._transport.close()
+            self._logger.error(f"Expecting {data[1]} methods, got {data[2:].nbytes}.")
+            self._transport.close()
 
         # Proccess authentication methods
         for m in data[2:]:
@@ -162,7 +168,7 @@ class Socks5Protocol(Protocol):
             self._transport.close()
             return
 
-        ## Check socks version 
+        ## Check socks version
         if data[0] != SOCKS5_VER[0]:
             self._logger.error(f"Invalid socks version: {data[0]}.")
             self._transport.close()
@@ -170,33 +176,35 @@ class Socks5Protocol(Protocol):
 
         if chr(data[1]).encode() not in self.SUPPORTED_CMD:
             self._logger.error(f"Unsupported command: {data[1]}.")
-            self._send_connection_reply(
-                rep=SOCKS5_REP_COMMAND_NOT_SUPPORTED)
+            self._send_connection_reply(rep=SOCKS5_REP_COMMAND_NOT_SUPPORTED)
             self._transport.close()
             return
 
         ## Parse the target host and port
         atyp = chr(data[3]).encode()
         if atyp == SOCKS5_ATYP_IPv4:
-            dhost = str(ipaddress.IPv4Address(data[4: 8].tobytes()))
+            dhost = str(ipaddress.IPv4Address(data[4:8].tobytes()))
         elif atyp == SOCKS5_ATYP_IPv6:
-            dhost = str(ipaddress.IPv6Address(data[4: 20].tobytes()))
+            dhost = str(ipaddress.IPv6Address(data[4:20].tobytes()))
         elif atyp == SOCKS5_ATYP_DOMAINNAME:
             dhostLen = data[4]
-            dhost = data[5: 5+dhostLen].tobytes().decode('utf-8')
+            dhost = data[5 : 5 + dhostLen].tobytes().decode("utf-8")
 
         dport, *_ = struct.unpack("!H", data[-2:])
         self._logger.debug(
-            f"cmd: {data[1]}, atyp: {atyp}, dhost: {dhost}, dport: {dport}.")
+            f"cmd: {data[1]}, atyp: {atyp}, dhost: {dhost}, dport: {dport}."
+        )
 
         ## Create connection to target host
-        self._logger.debug(
-            f"Creating remote connection to {dhost}:{dport}.")
+        self._logger.debug(f"Creating remote connection to {dhost}:{dport}.")
         coro = self._loop.create_connection(
-            lambda: RemoteConnectionProtocol(
-                socks_protocol=self), host=dhost, port=dport)
+            lambda: RemoteConnectionProtocol(socks_protocol=self),
+            host=dhost,
+            port=dport,
+        )
         task = self._loop.create_task(
-            asyncio.wait_for(coro, timeout=CONNECTION_TIMEOUT))
+            asyncio.wait_for(coro, timeout=CONNECTION_TIMEOUT)
+        )
         task.add_done_callback(self._on_remote_connection_establish)
 
     def _on_remote_connection_establish(self, task):
@@ -261,7 +269,9 @@ class Socks5Protocol(Protocol):
             self._handle_payload(data)
 
         else:
-            self._logger.error(f"Not expecting packet at conn. state: {self._connection_state}")
+            self._logger.error(
+                f"Not expecting packet at conn. state: {self._connection_state}"
+            )
             self._transport.close()
 
     def pause_writing(self):
@@ -288,4 +298,3 @@ class Socks5Protocol(Protocol):
                 transport (asyncio.Transport): The associated transport
         """
         return self._transport
-
