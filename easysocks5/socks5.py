@@ -4,9 +4,11 @@ import asyncio
 import ipaddress
 import logging
 import struct
+
 from asyncio import Protocol
 
 from easysocks5.remote import RemoteConnectionProtocol
+
 
 SOCKS5_VER = b"\x05"
 SOCKS5_AUTH_NO_AUTH = b"\x00"
