@@ -6,11 +6,11 @@ from asyncio import Protocol
 
 
 class RemoteConnectionProtocol(Protocol):
-    """ Remote Connection Protocol
+    """Remote Connection Protocol
 
-        Remote Connection Protocol is created when connection to
-        external host is established. It forwards traffic between
-        socks server and external host.
+    Remote Connection Protocol is created when connection to
+    external host is established. It forwards traffic between
+    socks server and external host.
     """
 
     def __init__(self, socks_protocol, logger=None, loop=None):
