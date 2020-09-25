@@ -144,10 +144,12 @@ class Socks5Protocol(Protocol):
         if data[1] == 0:
             self._logger.error(f"Zero authentication methods.")
             self._transport.close()
+            return
 
         elif data[2:].nbytes != data[1]:
             self._logger.error(f"Expecting {data[1]} methods, got {data[2:].nbytes}.")
             self._transport.close()
+            return
 
         # Proccess authentication methods
         for m in data[2:]:
@@ -161,6 +163,9 @@ class Socks5Protocol(Protocol):
                     self._authenticated = True
 
                 return
+
+        self._logger.error("No supported authentication method.")
+        self._transport.close()
 
     def _handle_connection_request(self, data):
         # Parse connection request
@@ -300,3 +305,13 @@ class Socks5Protocol(Protocol):
             transport (asyncio.Transport): The associated transport
         """
         return self._transport
+
+    @property
+    def txbytes(self):
+        """Get the transmitted bytes"""
+        return self._traffic["tx"]
+
+    @property
+    def rxbytes(self):
+        """Get the received bytes"""
+        return self._traffic["rx"]
