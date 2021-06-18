@@ -62,7 +62,7 @@ class Socks5Protocol(Protocol):
         else:
             self._logger = logger
 
-        if not loop:
+        if loop:
             self._loop = loop
         else:
             self._loop = asyncio.get_event_loop()
