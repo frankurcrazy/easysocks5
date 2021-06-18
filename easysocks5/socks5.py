@@ -203,6 +203,9 @@ class Socks5Protocol(Protocol):
         )
 
         ## Create connection to target host
+        self._create_remote_connection(dhost, dport)
+
+    def _create_remote_connection(self, dhost, dport):
         self._logger.debug(f"Creating remote connection to {dhost}:{dport}.")
         coro = self._loop.create_connection(
             lambda: RemoteConnectionProtocol(socks_protocol=self),
